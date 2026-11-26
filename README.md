@@ -4,10 +4,6 @@ An AI agent that builds responsive websites from plain-English prompts. Describe
 
 Built with [LangChain](https://docs.langchain.com/) and [LangGraph](https://langchain-ai.github.io/langgraph/).
 
-## Note
-
-It is recommended that you use the _*uv*_ python module as your project manager
-
 ## Features
 
 - **Prompt to website:** describe a site and get a working `main.html`, `styles.css` and `scripts.js`
@@ -69,6 +65,7 @@ When the agent finishes, open `workspace/main.html` in your browser.
 
 ## Notes
 
+- It is recommended that you use the _*uv*_ python module as your project manager
 - The agent is instructed to generate only three files: `main.html`, `styles.css` and `scripts.js`.
 - Generated code is written to disk by the agent, so review it before publishing it anywhere.
 - A recursion limit caps how many steps the agent can take in one turn, so it cannot loop forever.
