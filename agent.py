@@ -6,7 +6,7 @@ import os
 
 load_dotenv()
 
-SITE_DIR = (Path(__file__).parent / "workspace").resolve()
+SITE_DIR = (Path(__file__).parent / 'workspace').resolve()
 SITE_DIR.mkdir(parents=True, exist_ok=True)
 
 base_model = init_chat_model(
@@ -17,25 +17,25 @@ base_model = init_chat_model(
 
 ### TOOLS ###
 @tool
-def write_file(filename: str, content: str):
+def write_file(path: str, content: str):
     '''
         Creates or Overwrites a file in the site folder
 
         Args:
-            filename (str): The filename to be written including extension
+            path (str): The path of the file to be written, relative to the site directory
             content (str): The content to be written to the file
     '''
-    (SITE_DIR / filename).write_text(content, encoding='utf-8')
+    (SITE_DIR / path).write_text(content, encoding='utf-8')
 
 @tool
-def read_file(filename: str):
+def read_file(path: str):
     '''
         Reads a file in the site folder
 
         Args:
             filename (str): The filename to be read
     '''
-    return Path(rf'{SITE_DIR}\{filename}').read_text(encoding='utf-8')
+    return path.read_text(encoding='utf-8')
 
 tools = [write_file, read_file]
 tools_by_name = {tool.name: tool for tool in tools}
