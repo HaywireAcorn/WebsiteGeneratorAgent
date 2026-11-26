@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus CRM — Simple Customer Relationship Manager</title>
+  <meta name="description" content="Nexus CRM is a simple, lightweight CRM to track contacts, deals and pipeline in your browser." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <!-- ================= Sidebar ================= -->
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="Nexus CRM home">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 20a6 6 0 0 0-12 0" />
+            <circle cx="12" cy="9" r="4" />
+          </svg>
+        </span>
+        <span class="brand__name">Nexus<span>CRM</span></span>
+      </a>
+
+      <nav class="nav" aria-label="Workspace">
+        <button class="nav__item is-active" type="button" data-view="contacts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+          </svg>
+          <span>Contacts</span>
+          <span class="nav__count" id="navCount">0</span>
+        </button>
+        <button class="nav__item" type="button" data-view="pipeline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="6" height="18" rx="1.6" />
+            <rect x="11" y="8" width="4" height="13" rx="1.6" />
+            <rect x="17" y="13" width="4" height="8" rx="1.6" />
+          </svg>
+          <span>Pipeline</span>
+        </button>
+      </nav>
+
+      <div class="sidebar__card">
+        <p class="sidebar__card-title">Pipeline health</p>
+        <p class="sidebar__card-text" id="healthText">Add contacts to start tracking.</p>
+        <div class="meter" role="img" aria-label="Share of contacts who became customers">
+          <span class="meter__fill" id="meterFill"></span>
+        </div>
+      </div>
+
+      <p class="sidebar__note">Everything is saved locally in your browser.</p>
+    </aside>
+
+    <!-- ================= Main ================= -->
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar__title">
+          <h1 id="viewTitle">Contacts</h1>
+          <p id="viewSub">Your workspace at a glance.</p>
+        </div>
+
+        <div class="topbar__actions">
+          <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" />
+            </svg>
+            <label class="visually-hidden" for="searchInput">Search contacts</label>
+            <input id="searchInput" type="search" placeholder="Search name, company, email…" />
+          </div>
+          <button class="btn btn--primary" id="addContactBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            New contact
+          </button>
+        </div>
+      </header>
+
+      <section class="stats" aria-label="Overview">
+        <article class="stat" data-tone="brand">
+          <p class="stat__label">Total contacts</p>
+          <p class="stat__value" id="statTotal">0</p>
+          <p class="stat__sub" id="statTotalSub">in your workspace</p>
+        </article>
+        <article class="stat" data-tone="amber">
+          <p class="stat__label">Open leads</p>
+          <p class="stat__value" id="statLeads">0</p>
+          <p class="stat__sub" id="statLeadsSub">$0 potential</p>
+        </article>
+        <article class="stat" data-tone="accent">
+          <p class="stat__label">Customers</p>
+          <p class="stat__value" id="statCustomers">0</p>
+          <p class="stat__sub" id="statCustomersSub">$0 closed value</p>
+        </article>
+        <article class="stat" data-tone="slate">
+          <p class="stat__label">Open pipeline</p>
+          <p class="stat__value" id="statPipeline">$0</p>
+          <p class="stat__sub" id="statPipelineSub">0 deals in progress</p>
+        </article>
+      </section>
+
+      <!-- ---------- Contacts view ---------- -->
+      <section class="view is-active" id="contactsView" aria-label="Contacts">
+        <div class="panel">
+          <div class="panel__head">
+            <div class="filters" role="tablist" aria-label="Filter by status">
+              <button class="filter is-active" type="button" role="tab" data-filter="all" aria-selected="true">All</button>
+              <button class="filter" type="button" role="tab" data-filter="lead" aria-selected="false">Leads</button>
+              <button class="filter" type="button" role="tab" data-filter="active" aria-selected="false">Active</button>
+              <button class="filter" type="button" role="tab" data-filter="customer" aria-selected="false">Customers</button>
+            </div>
+            <p class="panel__count" id="countLabel">0 contacts</p>
+          </div>
+
+          <div class="table">
+            <div class="row row--head">
+              <span class="cell cell--person">Contact</span>
+              <span class="cell cell--status">Status</span>
+              <span class="cell cell--value">Deal value</span>
+              <span class="cell cell--actions">Actions</span>
+            </div>
+            <div id="contactRows"></div>
+          </div>
+
+          <div class="empty" id="emptyState">
+            <span class="empty__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M19 8v6M22 11h-6" />
+              </svg>
+            </span>
+            <p class="empty__title">No contacts found</p>
+            <p class="empty__text">Try a different search, or add your first contact to get started.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Pipeline view ---------- -->
+      <section class="view" id="pipelineView" aria-label="Pipeline">
+        <div class="board" id="board"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= Modal ================= -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="modal__head">
+        <div>
+          <h2 id="modalTitle">New contact</h2>
+          <p id="modalSub">Add someone to your workspace.</p>
+        </div>
+        <button class="icon-btn" type="button" id="modalClose" aria-label="Close dialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </header>
+
+      <form class="form" id="contactForm" novalidate>
+        <div class="field">
+          <label for="fName">Full name</label>
+          <input id="fName" name="name" type="text" placeholder="Amelia Hart" maxlength="60" required />
+        </div>
+        <div class="field">
+          <label for="fCompany">Company</label>
+          <input id="fCompany" name="company" type="text" placeholder="Lumen Studio" maxlength="60" />
+        </div>
+        <div class="field">
+          <label for="fEmail">Email</label>
+          <input id="fEmail" name="email" type="email" placeholder="amelia@lumen.io" maxlength="80" />
+        </div>
+        <div class="field">
+          <label for="fPhone">Phone</label>
+          <input id="fPhone" name="phone" type="tel" placeholder="+1 555 0142" maxlength="30" />
+        </div>
+        <div class="field">
+          <label for="fStatus">Stage</label>
+          <select id="fStatus" name="status">
+            <option value="lead">Lead</option>
+            <option value="active">Active</option>
+            <option value="customer">Customer</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fValue">Deal value (USD)</label>
+          <input id="fValue" name="value" type="number" min="0" step="100" placeholder="5000" />
+        </div>
+
+        <p class="form__error" id="formError" role="alert"></p>
+
+        <div class="form__actions">
+          <button class="btn btn--ghost" type="button" data-close>Cancel</button>
+          <button class="btn btn--primary" type="submit" id="saveBtn">Save contact</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
