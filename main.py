@@ -77,10 +77,12 @@ graph_builder.add_edge('tool_node', 'llm_call')
 agent = graph_builder.compile()
 
 ### MAIN LOOP ###
-history = []
-while True:
-    history.append(HumanMessage(content=input('Enter Message: ')))
-    print('Thinking...')
-    result = agent.invoke({'messages': history}, config={'recursion_limit': 30})
-    history = result['messages']
-    history[-1].pretty_print()
+
+if __name__ == '__main__':
+    history = []
+    while True:
+        history.append(HumanMessage(content=input('Enter Message: ')))
+        print('Thinking...')
+        result = agent.invoke({'messages': history}, config={'recursion_limit': 30})
+        history = result['messages']
+        history[-1].pretty_print()
